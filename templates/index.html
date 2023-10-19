@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}ECharts Visualization{% endblock %}
+
+{% block content %}
+    <div id="main" style="width: 100%; height: calc(150vh * 1);"></div>
+    <script src="https://cdn.jsdelivr.net/npm/echarts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/theme/dark.js"></script>
+    <script>
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'), 'dark');
+
+        myChart.resize();
+
+        // 异步加载数据
+        fetch('/data')
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                var pieChartData = data; // 赋值给pieChartData变量
+                // 使用 pieChartData 更新图表的 option
+                var option = {
+                    title: {
+                        text: '学院人数分布',
+                        textStyle: {
+                            fontSize: 25, // 设置字体大小为容器宽度的5%
+                        },
+                        left: 'center'
+                    },
+                    grid: {
+                        left: '50%', // 设置图表区域的左侧位置为容器的一半
+                        top: '30px',   // 设置图表区域距离容器顶部的距离
+                        right: '10%', // 设置图表区域距离容器右侧的距离
+                        bottom: '30%' // 设置图表区域距离容器底部的距离
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        data: pieChartData.map(item => item.name), // 使用数据种类作为图例
+                        left: '10%', // 设置 legend 距离容器左侧的距离
+                        top: '10%', // 设置 legend 垂直居中
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{b}: {c}人 ({d}%)'  // 设置提示框的显示格式，{b} 表示数据种类，{c} 表示数据数量，{d}% 表示百分比
+                    },
+                    series: [
+                        {
+                            name: 'Data',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '60%'],
+                            data: pieChartData, // 使用 pieChartData 作为数据源
+                            // 高亮色块
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                myChart.setOption(option); // 更新图表
+            });
+
+    </script>
+{% endblock %}
+

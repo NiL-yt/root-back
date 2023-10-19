@@ -1,0 +1,4 @@
+nohup.*
+__pycache__/
+venv/
+virtual-environment-name/
